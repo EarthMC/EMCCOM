@@ -27,33 +27,22 @@ public class SpawnProtectionListener implements Listener {
 
     private static final int CHUNK_DISTANCE = 8;
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onSpawnEvent(SpawnEvent event) {
-        if (!event.isCancelled()) {
-            Player player = event.getPlayer();
-            UUID playerId = player.getUniqueId();
-
-            playerChunkCountMap.put(playerId, CHUNK_DISTANCE);
-        }
+        playerChunkCountMap.put(event.getPlayer().getUniqueId(), CHUNK_DISTANCE);
     }
 
     @EventHandler
     public void onRespawnEvent(PlayerRespawnEvent event) {
-            Player player = event.getPlayer();
-            UUID playerId = player.getUniqueId();
-
-            playerChunkCountMap.put(playerId, CHUNK_DISTANCE);
+        playerChunkCountMap.put(event.getPlayer().getUniqueId(), CHUNK_DISTANCE);
     }
 
     @EventHandler
     public void onSpawnEventCancelled(CancelledTownyTeleportEvent event) {
-        Resident teleporter = event.getResident();
-        Player residentAsPlayer = TownyAPI.getInstance().getPlayer(teleporter);
-        UUID playerId = residentAsPlayer.getUniqueId();
-
-        playerChunkCountMap.remove(playerId);
+        playerChunkCountMap.remove(event.getResident().getUUID());
     }
 
+    // 😭😭😭
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
@@ -61,34 +50,30 @@ public class SpawnProtectionListener implements Listener {
         Chunk fromChunk = event.getFrom().getChunk();
         Chunk toChunk = event.getTo().getChunk();
 
-        Resident playerAsResident = TownyAPI.getInstance().getResident(player);
-        ResidentMetadataManager rmm = new ResidentMetadataManager();
-        SpawnProtPref SpawnProtPrefOfResident = rmm.getResidentSpawnProtPref(playerAsResident);
+        if (playerChunkCountMap.containsKey(playerId) && !fromChunk.equals(toChunk)) {
+            int remainingChunks = getRemainingChunks(playerId);
+            if (remainingChunks > 0) {
+                remainingChunks--;
+                updateRemainingChunks(playerId, remainingChunks);
 
-        if (playerChunkCountMap.containsKey(playerId)) {
-            if (!fromChunk.equals(toChunk)) {
-                int remainingChunks = getRemainingChunks(playerId);
-                if (remainingChunks > 0) {
-                    remainingChunks--;
-                    updateRemainingChunks(playerId, remainingChunks);
-
-                    if (!(SpawnProtPrefOfResident == SpawnProtPref.HIDE)) {
-                        Component message;
-                        if (remainingChunks > 0) {
-                            message = Component.text()
-                                    .append(Component.text("[Towny] ", NamedTextColor.GOLD))
-                                    .append(Component.text("You have " + remainingChunks + " chunks left before losing items on death!", NamedTextColor.RED))
-                                    .build();
-                        } else {
-                            message = Component.text()
-                                    .append(Component.text("[Towny] ", NamedTextColor.GOLD))
-                                    .append(Component.text("You will now lose your items if you die! Run ", NamedTextColor.RED))
-                                    .append(Component.text("/spawnprotpref HIDE", NamedTextColor.GREEN))
-                                    .append(Component.text(" to disable chunk notification warnings", NamedTextColor.RED))
-                                    .build();
-                        }
-                        player.sendMessage(message);
+                Resident playerAsResident = TownyAPI.getInstance().getResident(player);
+                SpawnProtPref SpawnProtPrefOfResident = ResidentMetadataManager.getResidentSpawnProtPref(playerAsResident);
+                if (!(SpawnProtPrefOfResident == SpawnProtPref.HIDE)) {
+                    Component message;
+                    if (remainingChunks > 0) {
+                        message = Component.text()
+                                .append(Component.text("[Towny] ", NamedTextColor.GOLD))
+                                .append(Component.text("You have " + remainingChunks + " chunks left before losing items on death!", NamedTextColor.RED))
+                                .build();
+                    } else {
+                        message = Component.text()
+                                .append(Component.text("[Towny] ", NamedTextColor.GOLD))
+                                .append(Component.text("You will now lose your items if you die! Run ", NamedTextColor.RED))
+                                .append(Component.text("/spawnprotpref HIDE", NamedTextColor.GREEN))
+                                .append(Component.text(" to disable chunk notification warnings", NamedTextColor.RED))
+                                .build();
                     }
+                    player.sendMessage(message);
                 }
             }
         }

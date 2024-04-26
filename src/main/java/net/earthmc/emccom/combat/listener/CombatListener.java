@@ -56,15 +56,15 @@ public class CombatListener implements Listener {
         TownyWorld world = TownyAPI.getInstance().getTownyWorld(event.getVictimPlayer().getWorld().getName());
         Player attacker = event.getAttackingPlayer();
         Player victim = event.getVictimPlayer();
-        Resident attackerAsResident = TownyAPI.getInstance().getResident(attacker);
-        ResidentMetadataManager rmm = new ResidentMetadataManager();
-        CombatPref combatPrefOfAttacker = rmm.getResidentCombatPref(attackerAsResident);
 
-        if (!world.isPVP() || !CombatHandler.isTagged(victim)) {
+        if (world == null || !world.isUsingTowny() || !world.isPVP() || !CombatHandler.isTagged(victim)) {
             return;
         }
 
         if (CombatHandler.isTagged(victim)) { // If the victim is tagged
+            Resident attackerAsResident = TownyAPI.getInstance().getResident(attacker);
+            CombatPref combatPrefOfAttacker = ResidentMetadataManager.getResidentCombatPref(attackerAsResident);
+
             if (combatPrefOfAttacker == UNSAFE || CombatHandler.isTagged(attacker)) {
                 event.setCancelled(false); // Allow combat if attacker is UNSAFE or already tagged
             } else {
@@ -73,38 +73,16 @@ public class CombatListener implements Listener {
         }
         event.setCancelled(false);
     }
+    @SuppressWarnings("UnstableApiUsage")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player))
+        if (!(event.getEntity() instanceof Player damaged))
             return;
 
-        Player damaged = (Player) event.getEntity();
-        Player damager;
-
-        if ((event.getDamager() instanceof Player)) {
-            damager = (Player) event.getDamager();
+        if (event.getDamageSource().getCausingEntity() instanceof Player damager && !damager.equals(damaged)) {
             CombatHandler.applyTag(damager);
-
-        } else if (event.getDamager() instanceof Projectile) {
-            ProjectileSource shooter = ((Projectile) event.getDamager()).getShooter();
-            if (shooter == null || !(shooter instanceof Player))
-                return;
-
-            damager = (Player) shooter;
-            CombatHandler.applyTag(damager);
+            CombatHandler.applyTag(damaged);
         }
-
-        else {
-            return;
-        }
-
-        if (damager.equals(damaged))
-            return;
-
-
-
-
-        CombatHandler.applyTag(damaged);
     }
 
     @EventHandler
@@ -112,17 +90,16 @@ public class CombatListener implements Listener {
         Player player = event.getPlayer();
         if (!CombatHandler.isTagged(player))
             return;
-        if (!(player == null)) {
-            BossBarTask.remove(player);
-            CombatHandler.removeTag(player);
 
-            TownBlock townBlock = TownyAPI.getInstance().getTownBlock(player.getLocation());
-            if (townBlock != null && townBlock.getType() == TownBlockType.ARENA && townBlock.hasTown())
-                return;
+        BossBarTask.remove(player);
+        CombatHandler.removeTag(player);
 
-            deathsForLoggingOut.add(player.getUniqueId());
-            player.setHealth(0.0);
-        }
+        TownBlock townBlock = TownyAPI.getInstance().getTownBlock(player.getLocation());
+        if (townBlock != null && townBlock.getType() == TownBlockType.ARENA && townBlock.hasTown())
+            return;
+
+        deathsForLoggingOut.add(player.getUniqueId());
+        player.setHealth(0.0);
     }
 
     @EventHandler

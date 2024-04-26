@@ -47,8 +47,7 @@ public class SpawnProtPrefCommand implements TabExecutor {
             }
         }
 
-        ResidentMetadataManager rmm = new ResidentMetadataManager();
-        rmm.setResidentSpawnProtPref(resident, spawnProtPref);
+        ResidentMetadataManager.setResidentSpawnProtPref(resident, spawnProtPref);
         if (args[0].equals("hide")){
             player.sendMessage(Component.text("Successfully changed your spawn protection preference to HIDE.\n" +
                     "You will no longer be able to see your protection status in chat upon spawning somewhere.", NamedTextColor.GREEN));

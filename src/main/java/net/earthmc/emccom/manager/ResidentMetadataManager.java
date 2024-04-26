@@ -6,10 +6,12 @@ import net.earthmc.emccom.object.CombatPref;
 import net.earthmc.emccom.object.SpawnProtPref;
 
 public class ResidentMetadataManager {
-    private final String combatPrefKey = "emccom_combat_pref";
-    private final String spawnProtPrefKey = "emccom_spawn_prot_pref";
+    private static final String combatPrefKey = "emccom_combat_pref";
+    private static final String spawnProtPrefKey = "emccom_spawn_prot_pref";
 
-    public void setResidentCombatPref(Resident resident, CombatPref combatPref) {
+    private ResidentMetadataManager() {}
+
+    public static void setResidentCombatPref(Resident resident, CombatPref combatPref) {
         if (!resident.hasMeta(combatPrefKey))
             resident.addMetaData(new StringDataField(combatPrefKey, null));
 
@@ -20,7 +22,7 @@ public class ResidentMetadataManager {
         resident.addMetaData(sdf);
     }
 
-    public CombatPref getResidentCombatPref(Resident resident) {
+    public static CombatPref getResidentCombatPref(Resident resident) {
         if (resident == null) return null;
 
         StringDataField sdf = (StringDataField) resident.getMetadata(combatPrefKey);
@@ -29,7 +31,7 @@ public class ResidentMetadataManager {
         return CombatPref.getCombatPrefByName(sdf.getValue());
     }
 
-    public void setResidentSpawnProtPref(Resident resident, SpawnProtPref spawnProtPref) {
+    public static void setResidentSpawnProtPref(Resident resident, SpawnProtPref spawnProtPref) {
         if (!resident.hasMeta(spawnProtPrefKey))
             resident.addMetaData(new StringDataField(spawnProtPrefKey, null));
 
@@ -40,7 +42,7 @@ public class ResidentMetadataManager {
         resident.addMetaData(sdf);
     }
 
-    public SpawnProtPref getResidentSpawnProtPref(Resident resident) {
+    public static SpawnProtPref getResidentSpawnProtPref(Resident resident) {
         if (resident == null) return null;
 
         StringDataField sdf = (StringDataField) resident.getMetadata(spawnProtPrefKey);

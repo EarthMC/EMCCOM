@@ -29,9 +29,6 @@ public class CombatTagCommand implements CommandExecutor {
             case "untag":
                 parseUntagCommand(sender, args);
                 break;
-            case "test":
-                parseTestCommand(sender, args);
-                break;
             default:
                 sender.sendMessage("§7[§bCombatTag§7]: §eIncorrect Usage: §e/combattag help");
                 break;
@@ -56,7 +53,7 @@ public class CombatTagCommand implements CommandExecutor {
                 return;
             }
         } else {
-            target = Bukkit.getPlayer(args[1]);
+            target = Bukkit.getPlayerExact(args[1]);
             if (target == null || !target.isOnline()) {
                 sender.sendMessage("§7[§bCombatTag§7]: §cPlayer doesn't exist.");
                 return;
@@ -78,7 +75,7 @@ public class CombatTagCommand implements CommandExecutor {
                 return;
             }
         } else {
-            target = Bukkit.getPlayer(args[1]);
+            target = Bukkit.getPlayerExact(args[1]);
             if (target == null || !target.isOnline()) {
                 sender.sendMessage("§7[§bCombatTag§7]: §cPlayer doesn't exist.");
                 return;
@@ -93,18 +90,4 @@ public class CombatTagCommand implements CommandExecutor {
         CombatHandler.removeTag(target);
         sender.sendMessage("§7[§bCombatTag§7]: §e" + target.getName() + " has been untagged.");
     }
-    private void parseTestCommand(CommandSender sender, String[] args) {
-        if (args.length < 2) {
-            sender.sendMessage("§7[§bCombatTag§7]: §eIncorrect Usage: §e/combattag test <username>");
-            return;
-        }
-
-        Player target = Bukkit.getPlayer(args[1]);
-        if (target == null || !target.isOnline()) {
-            sender.sendMessage("§7[§bCombatTag§7]: §cPlayer doesn't exist or is not online.");
-            return;
-        }
-        sender.sendMessage("That player SUUUCKS!!");
-    }
-
 }

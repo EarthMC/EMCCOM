@@ -47,8 +47,7 @@ public class CombatPrefCommand implements TabExecutor {
             }
         }
 
-        ResidentMetadataManager rmm = new ResidentMetadataManager();
-        rmm.setResidentCombatPref(resident, combatPref);
+        ResidentMetadataManager.setResidentCombatPref(resident, combatPref);
         if (args[0].equals("safe")){
             player.sendMessage(Component.text("Successfully changed your combat preference to SAFE.\n" +
                     "You will no longer be able to hit tagged players within claims to initiate combat.", NamedTextColor.GREEN));
