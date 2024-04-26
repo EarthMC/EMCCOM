@@ -29,6 +29,7 @@ public class BossBarTask implements Consumer<ScheduledTask> {
                 BossBar bossBar = bossBarMap.computeIfAbsent(online.getUniqueId(), uuid -> {
                     BossBar newBar = BossBar.bossBar(Component.empty(), 0F, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
                     update(online, newBar);
+                    online.showBossBar(newBar);
                     return newBar;
                 });
 
