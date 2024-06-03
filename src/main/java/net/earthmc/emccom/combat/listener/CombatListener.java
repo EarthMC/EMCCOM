@@ -13,6 +13,7 @@ import net.earthmc.emccom.manager.ResidentMetadataManager;
 import net.earthmc.emccom.object.CombatPref;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -73,13 +74,16 @@ public class CombatListener implements Listener {
         }
         event.setCancelled(false);
     }
-    @SuppressWarnings("UnstableApiUsage")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player damaged))
             return;
 
-        if (event.getDamageSource().getCausingEntity() instanceof Player damager && !damager.equals(damaged)) {
+        Entity damagingEntity = event.getDamager();
+        if (damagingEntity instanceof Projectile projectile && projectile.getShooter() instanceof Player shooter)
+            damagingEntity = shooter;
+
+        if (damagingEntity instanceof Player damager && !damager.equals(damaged)) {
             CombatHandler.applyTag(damager);
             CombatHandler.applyTag(damaged);
         }
