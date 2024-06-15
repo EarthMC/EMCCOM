@@ -1,8 +1,8 @@
 package net.earthmc.emccom.combat.listener;
 
 import com.palmergames.bukkit.towny.TownyAPI;
-import com.palmergames.bukkit.towny.event.SpawnEvent;
-import com.palmergames.bukkit.towny.event.teleport.CancelledTownyTeleportEvent;
+import com.palmergames.bukkit.towny.TownyMessaging;
+import com.palmergames.bukkit.towny.event.teleport.SuccessfulTownyTeleportEvent;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.WorldCoord;
 import net.earthmc.emccom.manager.ResidentMetadataManager;
@@ -28,8 +28,8 @@ public class SpawnProtectionListener implements Listener {
     private static final int CHUNK_DISTANCE = 8;
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void onSpawnEvent(SpawnEvent event) {
-        playerChunkCountMap.put(event.getPlayer().getUniqueId(), CHUNK_DISTANCE);
+    public void onTeleport(SuccessfulTownyTeleportEvent event) {
+        playerChunkCountMap.put(event.getResident().getUUID(), CHUNK_DISTANCE);
     }
 
     @EventHandler
@@ -37,10 +37,6 @@ public class SpawnProtectionListener implements Listener {
         playerChunkCountMap.put(event.getPlayer().getUniqueId(), CHUNK_DISTANCE);
     }
 
-    @EventHandler
-    public void onSpawnEventCancelled(CancelledTownyTeleportEvent event) {
-        playerChunkCountMap.remove(event.getResident().getUUID());
-    }
 
     // 😭😭😭
     @EventHandler
