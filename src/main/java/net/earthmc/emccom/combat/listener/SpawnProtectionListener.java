@@ -9,7 +9,7 @@ import net.earthmc.emccom.manager.ResidentMetadataManager;
 import net.earthmc.emccom.object.SpawnProtPref;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -47,10 +47,16 @@ public class SpawnProtectionListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
-        Chunk fromChunk = event.getFrom().getChunk();
-        Chunk toChunk = event.getTo().getChunk();
 
-        if (playerChunkCountMap.containsKey(playerId) && !fromChunk.equals(toChunk)) {
+        Location from = event.getFrom();
+        final int fromChunkX = from.getBlockX() >> 4;
+        final int fromChunkZ = from.getBlockZ() >> 4;
+
+        Location to = event.getTo();
+        final int toChunkX = to.getBlockX() >> 4;
+        final int toChunkZ = to.getBlockZ() >> 4;
+
+        if (playerChunkCountMap.containsKey(playerId) && (fromChunkX != toChunkX || fromChunkZ != toChunkZ)) {
             int remainingChunks = getRemainingChunks(playerId);
             if (remainingChunks > 0) {
                 remainingChunks--;
