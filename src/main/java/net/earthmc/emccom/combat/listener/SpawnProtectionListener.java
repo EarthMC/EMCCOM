@@ -7,8 +7,6 @@ import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.WorldCoord;
 import net.earthmc.emccom.manager.ResidentMetadataManager;
 import net.earthmc.emccom.object.SpawnProtPref;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,8 +35,6 @@ public class SpawnProtectionListener implements Listener {
         playerChunkCountMap.put(event.getPlayer().getUniqueId(), CHUNK_DISTANCE);
     }
 
-
-    // 😭😭😭
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
@@ -61,21 +57,13 @@ public class SpawnProtectionListener implements Listener {
                 Resident playerAsResident = TownyAPI.getInstance().getResident(player);
                 SpawnProtPref SpawnProtPrefOfResident = ResidentMetadataManager.getResidentSpawnProtPref(playerAsResident);
                 if (!(SpawnProtPrefOfResident == SpawnProtPref.HIDE)) {
-                    Component message;
+                    String message;
                     if (remainingChunks > 0) {
-                        message = Component.text()
-                                .append(Component.text("[Towny] ", NamedTextColor.GOLD))
-                                .append(Component.text("You have " + remainingChunks + " chunks left before losing items on death!", NamedTextColor.RED))
-                                .build();
+                        message = "§6[Towny] §cYou have " + remainingChunks + " chunks left before losing items on death!";
                     } else {
-                        message = Component.text()
-                                .append(Component.text("[Towny] ", NamedTextColor.GOLD))
-                                .append(Component.text("You will now lose your items if you die! Run ", NamedTextColor.RED))
-                                .append(Component.text("/spawnprotpref HIDE", NamedTextColor.GREEN))
-                                .append(Component.text(" to disable chunk notification warnings", NamedTextColor.RED))
-                                .build();
+                        message = "§6[Towny] §cYou will now lose your items if you die! Run §a/spawnprotpref HIDE §cto disable chunk notification warnings";
                     }
-                    player.sendMessage(message);
+                    TownyMessaging.sendMessage(playerAsResident, message);
                 }
             }
         }
