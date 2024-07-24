@@ -48,25 +48,26 @@ public class SpawnProtectionListener implements Listener {
         final int toChunkX = to.getBlockX() >> 4;
         final int toChunkZ = to.getBlockZ() >> 4;
 
-        if (playerChunkCountMap.containsKey(playerId) && (fromChunkX != toChunkX || fromChunkZ != toChunkZ)) {
-            int remainingChunks = getRemainingChunks(playerId);
-            if (remainingChunks > 0) {
-                remainingChunks--;
-                updateRemainingChunks(playerId, remainingChunks);
+        if (!playerChunkCountMap.containsKey(playerId) || (fromChunkX == toChunkX && fromChunkZ == toChunkZ)) return;
 
-                Resident playerAsResident = TownyAPI.getInstance().getResident(player);
-                SpawnProtPref SpawnProtPrefOfResident = ResidentMetadataManager.getResidentSpawnProtPref(playerAsResident);
-                if (!(SpawnProtPrefOfResident == SpawnProtPref.HIDE)) {
-                    String message;
-                    if (remainingChunks > 0) {
-                        message = "§6[Towny] §cYou have " + remainingChunks + " chunks left before losing items on death!";
-                    } else {
-                        message = "§6[Towny] §cYou will now lose your items if you die! Run §a/spawnprotpref HIDE §cto disable chunk notification warnings";
-                    }
-                    TownyMessaging.sendMessage(playerAsResident, message);
-                }
-            }
+        int remainingChunks = getRemainingChunks(playerId);
+        if (remainingChunks <= 0) return;
+
+        remainingChunks--;
+        updateRemainingChunks(playerId, remainingChunks);
+
+        Resident playerAsResident = TownyAPI.getInstance().getResident(player);
+        SpawnProtPref spawnProtPrefOfResident = ResidentMetadataManager.getResidentSpawnProtPref(playerAsResident);
+
+        if (spawnProtPrefOfResident == SpawnProtPref.HIDE) return;
+
+        String message;
+        if (remainingChunks > 0) {
+            message = "§6[Towny] §cYou will be protected from losing your items in case of death for " + remainingChunks + " more chunks";
+        } else {
+            message = "§6[Towny] §cYou will now lose your items if you die! \nRun §a/spawnprotpref HIDE §cto disable chunk notification warnings";
         }
+        TownyMessaging.sendMessage(playerAsResident, message);
     }
 
     private int getRemainingChunks(UUID playerId) {
@@ -83,20 +84,19 @@ public class SpawnProtectionListener implements Listener {
         UUID playerId = player.getUniqueId();
 
         final WorldCoord coord = WorldCoord.parseWorldCoord(event.getEntity().getLocation());
-        if (TownyAPI.getInstance().isWilderness(coord))
-            return;
+        if (TownyAPI.getInstance().isWilderness(coord)) return;
 
-        if (playerChunkCountMap.containsKey(playerId)) {
-            int remainingChunks = getRemainingChunks(playerId);
-            if (remainingChunks > 0) {
-                event.setKeepInventory(true);
-                event.setKeepLevel(true);
-                event.getDrops().clear();
-                event.setDroppedExp(0);
+        if (!playerChunkCountMap.containsKey(playerId)) return;
 
-                playerChunkCountMap.remove(playerId);
-            }
-        }
+        int remainingChunks = getRemainingChunks(playerId);
+        if (remainingChunks <= 0) return;
+
+        event.setKeepInventory(true);
+        event.setKeepLevel(true);
+        event.getDrops().clear();
+        event.setDroppedExp(0);
+
+        playerChunkCountMap.remove(playerId);
     }
 }
 

@@ -11,6 +11,7 @@ import net.earthmc.emccom.commands.CombatTagCommand;
 import net.earthmc.emccom.commands.SpawnProtPrefCommand;
 import net.earthmc.emccom.config.Config;
 import net.earthmc.emccom.util.Translation;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 public final class EMCCOM extends JavaPlugin {
 
     private static EMCCOM instance;
+    private final FileConfiguration config = getConfig();
 
     public static EMCCOM getInstance() {
         return instance;
@@ -27,11 +29,10 @@ public final class EMCCOM extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-
+        Config.init(config);
+        saveConfig();
         Translation.loadStrings();
 
-        Config.init(getConfig());
-        saveConfig();
         setupListeners();
         setupCommands();
         runTasks();
@@ -40,7 +41,7 @@ public final class EMCCOM extends JavaPlugin {
     private void setupListeners() {
         getServer().getPluginManager().registerEvents(new CombatListener(), this);
         getServer().getPluginManager().registerEvents(new CommandListener(),this);
-        getServer().getPluginManager().registerEvents(new PlayerItemCooldownListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerItemCooldownListener(config), this);
         getServer().getPluginManager().registerEvents(new SpawnProtectionListener(), this);
     }
 
