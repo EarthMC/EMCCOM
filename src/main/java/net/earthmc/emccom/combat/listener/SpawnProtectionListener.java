@@ -17,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -83,6 +84,28 @@ public class SpawnProtectionListener implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onPlayerTeleportWithEnderPearl(PlayerTeleportEvent event) {
+        if (!event.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL)) return;
+
+        UUID uuid = event.getPlayer().getUniqueId();
+
+        Integer chunkCount = playerChunkCountMap.get(uuid);
+        if (chunkCount == null || chunkCount == 0) return;
+
+        Location from = event.getFrom();
+        Location to = event.getTo();
+
+        WorldCoord fromWorldCoord = WorldCoord.parseWorldCoord(from);
+        WorldCoord toWorldCoord = WorldCoord.parseWorldCoord(to);
+        if (fromWorldCoord.equals(toWorldCoord)) return; // Player didn't move chunks
+
+        double distance = from.distance(to);
+        int numChunksMoved = (int) Math.ceil(distance / 16);
+
+        updateRemainingChunks(uuid, chunkCount - numChunksMoved);
     }
 
     private int getRemainingChunks(UUID playerId) {
