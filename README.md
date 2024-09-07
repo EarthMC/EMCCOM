@@ -1,5 +1,5 @@
 # TownyCore
-This plugin was designed for handling basic functions inside the Nebula Towny Server (August 2021)
+This plugin was designed for handling basic functions inside the EarthPol Geopolitical Server (June 2021)
 
 Now repurposed for EarthMC ;) (As of April 2024)
 
