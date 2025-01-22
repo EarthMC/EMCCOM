@@ -2,7 +2,7 @@ name: EMCCOM
 version: ${project.version}
 main: net.earthmc.emccom.EMCCOM
 api-version: '1.20'
-authors: [ Foksha, Error110, Windows10Laptop, CorruptedGreed ]
+authors: [ Foksha, Error110, Windows10Laptop, CorruptedGreed, Ludwig_H, 0xBit ]
 description: A combat plugin!
 depend: [Towny]
 softdepend: [NametagEdit]

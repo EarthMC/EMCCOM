@@ -1,5 +1,5 @@
 # TownyCore
-This plugin was designed for handling basic functions inside the Nebula Towny Server (August 2021)
+This plugin was designed for handling basic functions inside the EarthPol Geopolitical Server (June 2021)
 
 Now repurposed for EarthMC ;) (As of April 2024)
 
@@ -16,6 +16,6 @@ Features:
  - + other features specific to the EarthMC environment.
 
 
-Originally made by Ludwig_H for NebulaMC, repurposed and modernized by Foksha, Error110, CorruptedGreed and Windows10Laptop for EarthMC!
+Originally made by Ludwig_H & 0xBit for EarthPol's TownyCore plugin, repurposed and modernized by Foksha, Error110, CorruptedGreed and Windows10Laptop for EarthMC!
 
 Special thanks to testers Alzxdnr and EXPloite ;D
