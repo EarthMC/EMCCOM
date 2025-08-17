@@ -1,4 +1,8 @@
 # TownyCore
+
+> [!NOTE]  
+> This repository has been archived as development of EMCCOM has been moved to our private monorepo.
+
 This plugin was designed for handling basic functions inside the EarthPol Geopolitical Server (June 2021)
 
 Now repurposed for EarthMC ;) (As of April 2024)
